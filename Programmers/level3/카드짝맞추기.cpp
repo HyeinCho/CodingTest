@@ -10,14 +10,10 @@ int dx[] = { 1,0,-1,0 };
 int dy[] = { 0,1,0,-1 };
 
 pair<int, pair<int, int>> bfs(int r, int c, int num, pair<int,int> destination) {
-    //priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
     queue<pair<int, pair<int, int>>> q;
     q.push({ 0, {r,c}});
 
     while (!q.empty()) {
-        /*int x = q.top().second.first;
-        int y = q.top().second.second;
-        int d = q.top().first;*/
         int x = q.front().second.first;
         int y = q.front().second.second;
         int d = q.front().first;
