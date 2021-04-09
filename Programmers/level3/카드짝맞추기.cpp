@@ -1,5 +1,3 @@
-// 시간 초과.......
-
 #include <string>
 #include <vector>
 #include<algorithm>
@@ -12,15 +10,19 @@ int dx[] = { 1,0,-1,0 };
 int dy[] = { 0,1,0,-1 };
 
 pair<int, pair<int, int>> bfs(int r, int c, int num, pair<int,int> destination) {
-    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
+    //priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
+    queue<pair<int, pair<int, int>>> q;
     q.push({ 0, {r,c}});
 
     while (!q.empty()) {
-        int x = q.top().second.first;
+        /*int x = q.top().second.first;
         int y = q.top().second.second;
-        int d = q.top().first;
-        q.pop();
+        int d = q.top().first;*/
+        int x = q.front().second.first;
+        int y = q.front().second.second;
+        int d = q.front().first;
 
+        q.pop();
         if (tmp[x][y] == num) {
             if (destination.first == -1 && destination.second == -1) { 
                 if (r != x || c != y) {
@@ -64,6 +66,9 @@ int solution(vector<vector<int>> board, int r, int c) {
         }
     }
     sort(card.begin(), card.end());
+
+    vector<int> permu(card.size() / 2);
+    for (int i = 0; i < permu.size(); i++) permu[i] = i + 1;
     do {
         int result = 0;
         int x = r;
@@ -72,30 +77,44 @@ int solution(vector<vector<int>> board, int r, int c) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) tmp[i][j] = board[i][j];
         }
-        vector<bool> visited(card.size() / 2 + 1);
-        for (int i = 0; i < card.size();i++) {
-            int num = card[i].first;
-            if (visited[num]) continue;
-            visited[num] = true;
 
+        for (int i = 0; i < permu.size();i++) {
+            int num = permu[i];
+
+            //  
             // 해당 넘버의 시작 지점 찾기
-            pair<int, pair<int, int>> start = bfs(x, y, num, card[i].second);
+            pair<int, pair<int, int>> start1 = bfs(x, y, num, card[2 * (num - 1)].second);
 
             // 해당 넘버의 끝 지점 찾기
-            pair<int, pair<int, int>> end = bfs(start.second.first, start.second.second, num, { -1,-1 });
+            pair<int, pair<int, int>> end1 = bfs(start1.second.first, start1.second.second, num, { -1,-1 });
 
-            tmp[start.second.first][start.second.second] = 0;
-            tmp[end.second.first][end.second.second] = 0;
+            // 반대방향
+            // 해당 넘버의 시작 지점 찾기
+            pair<int, pair<int, int>> start2 = bfs(x, y, num, card[2 * num - 1].second);
 
-            result += start.first + end.first + 2;
-            x = end.second.first;
-            y = end.second.second;
+            // 해당 넘버의 끝 지점 찾기
+            pair<int, pair<int, int>> end2 = bfs(start2.second.first, start2.second.second, num, { -1,-1 });
+
+            if (start1.first + end1.first > start2.first + end2.first) {
+                tmp[start2.second.first][start2.second.second] = 0;
+                tmp[end2.second.first][end2.second.second] = 0;
+                result += start2.first + end2.first + 2;
+                x = end2.second.first;
+                y = end2.second.second;
+            }
+            else {
+                tmp[start1.second.first][start1.second.second] = 0;
+                tmp[end1.second.first][end1.second.second] = 0;
+                result += start1.first + end1.first + 2;
+                x = end1.second.first;
+                y = end1.second.second;
+            }
 
             if (result > answer) break;
         }
         if (answer > result) answer = result;
 
-    } while (next_permutation(card.begin(), card.end()));
+    } while (next_permutation(permu.begin(), permu.end()));
 
 
     return answer;
