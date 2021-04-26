@@ -12,25 +12,28 @@ vector<int> solution(vector<string> gems) {
     set<string> s;
     for(string gem : gems) s.insert(gem);
     
+    unordered_map<string, int> m;
+    
     int mini = 100001;
     int start = 0;
-    int end = gems.size();
-    while (1){
-        unordered_map<string, int> m;
+    int end = 0;
+    while (1){    
         // end
         // 모든 다이아를 포함하는 최소 index
-        for(int i=start;i<gems.size();i++){
+        bool flag = false;
+        for(int i=end;i<gems.size();i++){
             if (m.find(gems[i]) == m.end()) m[gems[i]] = 1;
             else m[gems[i]]++;
             
             if(m.size() == s.size()) {
                 end = i;
+                flag = true;
                 break;
             }
         }
         
         // 찾아도 모든 다이아를 포함 못하므로 break
-        if(end == gems.size()) break;
+        if(!flag) break;
         
         // start
         // 모든 다이아를 포함하되 길이가 최소까지 될 수 있을 정도로
@@ -47,8 +50,9 @@ vector<int> solution(vector<string> gems) {
             mini = end - start + 1;
             answer = {start+1, end+1};
         }
+        m.erase(gems[start]);
         start++;
-        end = gems.size();
+        end++;
     }
     
     return answer;
