@@ -1,0 +1,18 @@
+SELECT H.HACKER_ID, H.NAME, COUNT(*) AS CHALLENGES_CREATED
+FROM HACKERS AS H
+JOIN CHALLENGES AS C
+ON H.HACKER_ID = C.HACKER_ID
+GROUP BY H.HACKER_ID, H.NAME
+HAVING CHALLENGES_CREATED = (SELECT MAX(CHALLENGES_CREATED)
+                             FROM (SELECT HACKER_ID, 
+                                   COUNT(*) AS CHALLENGES_CREATED
+                                   FROM CHALLENGES
+                                  GROUP BY HACKER_ID) AS SUB) 
+OR CHALLENGES_CREATED IN (SELECT CHALLENGES_CREATED 
+                          FROM (SELECT HACKER_ID, 
+                                   COUNT(*) AS CHALLENGES_CREATED
+                                   FROM CHALLENGES
+                                  GROUP BY HACKER_ID) AS SUB
+                          GROUP BY CHALLENGES_CREATED 
+                          HAVING COUNT(*) = 1)
+ORDER BY CHALLENGES_CREATED DESC, HACKER_ID
