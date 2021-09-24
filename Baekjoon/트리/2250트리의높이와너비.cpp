@@ -30,12 +30,15 @@ int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 	cin >> n;
+
+	for (int i = 0; i < 10001; i++) low[i] = 2147000000;
+
 	for (int i = 1; i <= n; i++) {
 		int parent, left, right;
 		cin >> parent >> left >> right;
 
 		tree[parent] = { left, right };
-		
+
 		node[parent]++;
 		if (left != -1) node[left]++;
 		if (right != -1) node[right]++;
@@ -63,7 +66,7 @@ int main() {
 		}
 	}
 
-	cout << level << ' ' << answer - 1;
+	cout << level << ' ' << answer + 1;
 
 	return 0;
 }
